@@ -28,7 +28,8 @@ public class JwtAuthenticationProvider extends AbstractUserDetailsAuthentication
 
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails,
-            UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {}
+            UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+    }
 
     @Override
     protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken passwordToken)
@@ -39,6 +40,10 @@ public class JwtAuthenticationProvider extends AbstractUserDetailsAuthentication
         Jwtuser jwtUser = jwtValidator.validate(token);
         if (jwtUser == null) {
             throw new RuntimeException("JWT user is incorrect");
+        }
+
+        if (jwtValidator.isTokenExpired(token)) {
+            throw new RuntimeException("JWT Token is expired");
         }
 
         List<GrantedAuthority> grantedAuthorities = AuthorityUtils
